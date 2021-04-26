@@ -11,14 +11,15 @@
 ]}]).
 
 
+
+-define(LINE_MAX_LENGTH, 10000). % 	на мой взгляд более 10 тыс символов в строке описания одной цепи не требуется
+
 %% @doc Нормализация строки. Сведение к нижнему регистру, замена 3*185 на 3х185, удаление лишних пробелов
--spec normalize(Text_line) -> string().
 
 %% @doc Валидация входных данных. Проверка на правильность ввода.
 
 
 %% @doc Валидация вводного файла. Я не верю в схемы размером более 500кБ текста и более 1000 элементов в цепи (т.е не более 100.000 символов в строке).
--spec is_scheme_valid(name_all()) -> atom().
 
 
 comp({Type, Val, Angle}) -> {Type, Val, -Angle}.
@@ -34,6 +35,22 @@ is_impedance(_)					-> false.
 
 is_power({power, _, _}) -> true;
 is_power(_) -> false.
+
+is_lines_short(Filename) ->
+	{ok, FD} = file:open(Filename, read),
+	{ok, FirstLine} = file:read_line(FD),
+	Lengths = read_n_length(FirstLine, [], FD),
+	Maxlen	= lists:max(Lengths),
+	Maxlen	< LINE_MAX_LENGTH.
+
+read_n_length([], Lengths, _FD) -> Lengths;
+read_n_length(Line, Lengths, FD) ->
+	{ok, Nextline} = file:read_line(FD),
+	L = length(Line),
+	read_n_length(Nextline, [L|Lengths], FD).
+
+
+
 
 %% @doc функция смены типа электрических величин. Поскольку в математических операциях типы не имеют смысла, необходимо их приводить к требуемому результату в конце вычислений.
 -spec change_type(A, Type) -> {Type, number(), number()} when
@@ -63,7 +80,7 @@ module(A) ->
 	A = Val * math:cos(Angle),
 	B = Val * math:sin(Angle),
 	math:sqrt(A*A+B*B).
-
+NE
 %% @doc возведение комплексного числа в квадрат
 -spec square(A) -> B when
 	A :: complex_number(),
