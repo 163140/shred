@@ -1,7 +1,10 @@
 -module(shred).
 -include_lib("eunit/include/eunit.hrl").
+-include_lib("kernel/include/file.hrl").
 -export([]).
 -author("ea1a87").
+
+-define(MAX_FILE_SIZE, 500000). % 500KB
 
 %% Неиспользуемые в настоящий момент функции
 -compile([{nowarn_unused_function, [
@@ -20,6 +23,30 @@
 
 
 %% @doc Валидация вводного файла. Я не верю в схемы размером более 500кБ текста и более 1000 элементов в цепи (т.е не более 100.000 символов в строке).
+-spec is_scheme_valid(name_all()) -> atom().
+is_scheme_valid(Filename) ->
+	Fileinfo = read_file_info(Filename, [{time, posix}],
+	%% TODO: обработка ошибок
+	{ ok, {file_info, Size, regular, Mode, _, _, _, _, _, _, _, _, _, _}} =
+																																			Fileinfo,
+	% небольшого размера
+	MAX_FILE_SIZE = 500000, %% Bytes
+	Small = Size < MAX_FILE_SIZE,
+	TOO_LONG_LINE = 100000, %% ascii symbols
+.
+
+is_readable(Fileinfo) ->
+	{ok, _Info} = Fileinfo,
+	Info = tuple_to_list(_Info),
+	lists:member(read, Info) or lists:member(read_write, Info).
+
+is_small(Fileinfo) ->
+	{ok, Info} = Fileinfo,
+	
+
+
+
+	
 
 
 comp({Type, Val, Angle}) -> {Type, Val, -Angle}.
