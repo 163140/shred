@@ -4,6 +4,8 @@
 -export([]).
 -author("ea1a87").
 
+-define(MAX_FILE_SIZE, 500000). % 500KB
+
 %% Неиспользуемые в настоящий момент функции
 -compile([{nowarn_unused_function, [
 	{module, 1},
@@ -25,13 +27,21 @@ is_scheme_valid(Filename) ->
 	%% TODO: обработка ошибок
 	{ ok, {file_info, Size, regular, Mode, _, _, _, _, _, _, _, _, _, _}} =
 																																			Fileinfo,
-	% читаемо?
-	Readable = (Mode == read) or (Mode == read_write),
 	% небольшого размера
 	MAX_FILE_SIZE = 500000, %% Bytes
 	Small = Size < MAX_FILE_SIZE,
 	TOO_LONG_LINE = 100000, %% ascii symbols
 .
+
+is_readable(Fileinfo) ->
+	{ok, _Info} = Fileinfo,
+	Info = tuple_to_list(_Info),
+	lists:member(read, Info) or lists:member(read_write, Info).
+
+is_small(Fileinfo) ->
+	{ok, Info} = Fileinfo,
+	
+
 
 
 	
