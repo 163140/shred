@@ -89,6 +89,37 @@ is_structure_ok(Line) ->
 		 true   -> true
   end.
 
+%% @doc Тонкая валидация. Проверка файла на предмет коррекности введенных данных, например: марка кабеля, сечение и т.д.
+
+scrutiny(Filename) ->
+	Filecontent = read_to_lines(Filename),
+	DATA = parse_data(Filecontent), % [{line1, [obj_name, obj_par1, ...]}, line2... ]
+	OK   = check(DATA),
+	stub,
+	true.
+
+read_to_lines(Filename) ->
+	BIN_data = file:read("point.erl"),
+	Lines		 = [binary_to_list(Line) || Line <- binary:split(
+																							BIN_data, <<"\n">>,
+																							[global]),
+																			Line =/= << >>].
+
+parse(Data) ->
+stub.
+
+parse_line(Line) ->
+	DATA = parse_data(Filecontent), % [{line1, [obj_name, obj_par1, ...]}, line2... ]
+	Data = binary:split(Line, <<";">>, [global]),
+	pack().
+
+structuring(List) ->
+	Elements = (length(List) - 3)/6,
+
+	
+
+	
+
 
 
 
